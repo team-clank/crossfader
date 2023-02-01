@@ -1,0 +1,12 @@
+[package]
+name = 'clank'
+version = '1.0.0'
+
+[addresses]
+source_addr = '0x370e24bddb0149e8c225b87f8e0e19b5786f58aff7cdcb7b949419c55d6712bb'
+module_addr = '0x370e24bddb0149e8c225b87f8e0e19b5786f58aff7cdcb7b949419c55d6712bb'
+
+[dependencies.AptosFramework]
+git = 'https://github.com/aptos-labs/aptos-core.git'
+rev = 'main'
+subdir = 'aptos-move/framework/aptos-framework'

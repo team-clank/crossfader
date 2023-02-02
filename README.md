@@ -1,9 +1,11 @@
 ## Why did we make this product?
-We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). As a proof of concept of it, we impelemtned **Crossfader**, on-chain vault with conditional 2FA. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/koe7)
 
+We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). As a proof of concept of it, we impelemtned **Crossfader**, on-chain vault with conditional 2FA. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md)
 
 # Crossfader
+
 ## Problems
+
 How do you keep your on-chain assets? There might be two most secure ways. a multi-sig tool or a hard wallet. The most convenient method is probably a hot wallet. But, Using multi-sig, or dividing accounts are too incovenient. The most wallets rely on all assets for only one private key.
 
 Crossfader is a slider used by a DJ to naturally flip or mix sounds between two sources. You can move the crossfader left and right. DJ can play one side of the music, or mix it properly.
@@ -13,7 +15,9 @@ The importance between security and convenience varies from person to person, fr
 It should be adjusted like a crossfader.
 
 ## Key features
+
 ### 'Conditional' 2FA
+
 It requires additional authentication, only when conditions are satisfied.
 
 When you use a small amount of money, only one signature is needed.
@@ -27,6 +31,7 @@ However, if the withdrawal limit you set is exceeded, Single-Sign On authenticat
 Small amounts can be used conveniently, and large amounts can be kept safe.
 
 ### 'Weighted' 2FA
+
 We minimized the privileges of other auth factors, except for the original private key.
 Only with SSO authentication, there is nothing to do.
 
@@ -36,6 +41,7 @@ When large, it can just approve.
 It enhances security, without any new point of failure.
 
 ### Asset operation
+
 Of course, you can operate the assets in the vault.
 <img width="676" alt="스크린샷 2023-02-06 오전 12 06 12" src="https://user-images.githubusercontent.com/26621762/216827364-b74391d5-1ce3-40cc-bc65-7ab0256c2715.png">
 
@@ -43,10 +49,11 @@ The contract contains, the addresses of a particular Defi service and its functi
 The number of activities will keep being added.
 
 ## What’s next for Crossfader
-- **Aptos-core contribution for suggesting `native customized multi sig`** (Please visit [the link](https://github.com/koe7) if you are interested!)
-    - Flagship service of the new standard
-    - more secure conditional 2FA account
-    - secured dynamic transactions
+
+- **Aptos-core contribution for suggesting `native customized multi sig`** (Please visit [the link](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md) if you are interested!)
+  - Flagship service of the new standard
+  - more secure conditional 2FA account
+  - secured dynamic transactions
 - Connecting Various Defi
 - Notification for hacking detection.
 - Support key rotation when hacking

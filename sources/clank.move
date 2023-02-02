@@ -1,5 +1,4 @@
 module ra_addr::clank {
-    // use std::error;
     use std::signer;
     use std::vector;
     use aptos_std::table::{Self, Table};
@@ -23,6 +22,7 @@ module ra_addr::clank {
     const E_VAULTS_NOT_INITIALIZED: u64 = 3;
     const E_VAULT_NOT_INITIALIZED: u64 = 4;
     const E_INAPPROPRIATE_SECOND_FA: u64 = 5;
+    const E_LIMIT_CHANGE_REQ_UNMATCHED: u64 = 6;
 
     struct ModuleData has key {
         signer_cap: SignerCapability,
@@ -35,22 +35,17 @@ module ra_addr::clank {
 
     struct Vault<phantom CoinType> has store {
         addr_2fa: address,
-        // original_auth: vec<u8>, TODO : in order to prevent compromised key rotation
+        // original_auth: vec<u8>, // ROADMAP : prevent compromised key rotation
         coins: Coin<CoinType>,
         withdrawal_limit: u64,
         withdrawal_waiting: Table<address, Coin<CoinType>>,
         withdrawal_history: vector<WithdrawalHistroy>, // TODO : use Queue
-        limit_change_req: LimitChangeReq,
+        limit_change_req: u64,
     }
 
     struct WithdrawalHistroy has store, drop, copy {
         amount: u64,
         timestamp: u64,
-    }
-
-    struct LimitChangeReq has store {
-        req_1: u64,
-        req_2: u64,
     }
 
     fun init_module(resource_signer: &signer) {
@@ -94,10 +89,7 @@ module ra_addr::clank {
             withdrawal_limit,
             withdrawal_waiting: table::new<address, Coin<CoinType>>(),
             withdrawal_history: vector::empty<WithdrawalHistroy>(),
-            limit_change_req: LimitChangeReq {
-                req_1: 0,
-                req_2: 0,
-            },
+            limit_change_req: 0,
         });
         vaults.vault_count = vaults.vault_count + 1;
     }
@@ -172,6 +164,27 @@ module ra_addr::clank {
         let waiting = table::borrow_mut(&mut vault.withdrawal_waiting, receiver);
         let extracted = coin::extract<CoinType>(waiting, amount);
         coin::deposit<CoinType>(receiver, extracted);
+    }
+
+    public entry fun request_limit_change<CoinType>(account: &signer, new_limit: u64) acquires ModuleData, Vaults {
+        let addr = signer::address_of(account);
+        assert_vault_initialized<CoinType>(addr);
+        let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
+        let vault = table::borrow_mut(&mut vaults.vaults, addr);
+
+        vault.limit_change_req = new_limit;
+    }
+
+    public entry fun allow_limit_change<CoinType>(account: &signer, origin_addr: address, new_limit: u64) acquires ModuleData, Vaults {
+        let addr = signer::address_of(account);
+        assert_vault_initialized<CoinType>(origin_addr);
+        let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
+        let vault = table::borrow_mut(&mut vaults.vaults, origin_addr);
+
+        assert!(vault.addr_2fa == addr, E_INAPPROPRIATE_SECOND_FA);
+        assert!(vault.limit_change_req == new_limit, E_LIMIT_CHANGE_REQ_UNMATCHED);
+        vault.withdrawal_limit = new_limit;
+        vault.limit_change_req = 0;
     }
 
     #[test_only]
@@ -255,5 +268,29 @@ module ra_addr::clank {
         assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 2500, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 2500, 0);
+    }
+
+    #[test(origin_account = @origin_account, resource_account = @ra_addr, user_account1 = @0x123, user_account2 = @0x234, another_account=@0x567, aptos_framework=@aptos_framework)]
+    public entry fun test_limit_change(origin_account: &signer, resource_account: &signer, user_account1: &signer, user_account2: &signer, another_account: &signer, aptos_framework: &signer) acquires ModuleData, Vaults {
+        set_up_test(origin_account, resource_account, user_account1, user_account2, another_account, aptos_framework, 10);
+        init_vaults<AptosCoin>(origin_account);
+        initialize<AptosCoin>(user_account1, signer::address_of(user_account2), 1000);
+
+        deposit<AptosCoin>(user_account1, 5000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 5000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 0, 0);
+
+        // exceeded the withdrawal limit 1000
+        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 1500);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 3500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 0, 0);
+
+        // change withdrawal limit from 1000 to 2000
+        request_limit_change<AptosCoin>(user_account1, 2000);
+        allow_limit_change<AptosCoin>(user_account2, signer::address_of(user_account1), 2000);
+
+        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 1500);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 2000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 1500, 0);
     }
 }

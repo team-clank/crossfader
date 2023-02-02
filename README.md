@@ -1,18 +1,29 @@
-## Why did we make this product?
-
-We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). As a proof of concept of it, we impelemtned **Crossfader**, on-chain vault with conditional 2FA. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md)
 
 # Crossfader
+**Crossfader** is on-chain vault with conditional 2FA
 
-## Problems
+We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). Crossfader was made as a proof of concept. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md)
 
-How do you keep your on-chain assets? There might be two most secure ways. a multi-sig tool or a hard wallet. The most convenient method is probably a hot wallet. But, Using multi-sig, or dividing accounts are too incovenient. The most wallets rely on all assets for only one private key.
-
+### why is this product called Crossfader?
 Crossfader is a slider used by a DJ to naturally flip or mix sounds between two sources. You can move the crossfader left and right. DJ can play one side of the music, or mix it properly.
 
 The importance between security and convenience varies from person to person, from situation to situation. It is not divided into 0 or 1.
 
 It should be adjusted like a crossfader.
+
+## Demo
+
+### withdraw
+
+![withdraw](https://user-images.githubusercontent.com/48384542/217027649-4d90c15c-6522-45ed-a225-0d82a8eb7258.gif)
+
+### overwithdraw
+
+![overwithdraw](https://user-images.githubusercontent.com/48384542/217027589-0b8c1142-3e0e-414f-a55d-10d8af03da2c.gif)
+
+## Problems
+
+How do you keep your on-chain assets? There might be two most secure ways. a multi-sig tool or a hard wallet. The most convenient method is probably a hot wallet. But, Using multi-sig, or dividing accounts are too incovenient. The most wallets rely on all assets for only one private key.
 
 ## Key features
 

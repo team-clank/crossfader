@@ -6,7 +6,7 @@ module ra_addr::clank {
     use aptos_framework::account::{Self, SignerCapability};
     use aptos_framework::coin::{Self, Coin};
     use aptos_framework::resource_account;
-    // use aptos_framework::timestamp;
+    use aptos_framework::timestamp;
 
     #[test_only]
     use std::string;
@@ -14,6 +14,8 @@ module ra_addr::clank {
     use aptos_framework::aptos_coin::AptosCoin;
     #[test_only]
     use aptos_framework::account::create_account_for_test;
+
+    const ONE_DAY_SEC: u64 = 86400;
 
     // Errors
     const E_ALREADY_INIT_VAULTS: u64 = 1;
@@ -37,7 +39,7 @@ module ra_addr::clank {
         coins: Coin<CoinType>,
         withdrawal_limit: u64,
         withdrawal_waiting: Table<address, Coin<CoinType>>,
-        withdrawal_history: vector<WithdrawalHistroy>, // TODO : better to use Queue
+        withdrawal_history: vector<WithdrawalHistroy>, // TODO : use Queue
         limit_change_req: LimitChangeReq,
     }
 
@@ -139,9 +141,9 @@ module ra_addr::clank {
         let vault = table::borrow_mut(&mut vaults.vaults, addr);
 
         // Clean up old history
-        let now: u64 = 10; // timestamp::now_seconds();
+        let now: u64 = timestamp::now_seconds();
         while (!vector::is_empty<WithdrawalHistroy>(&vault.withdrawal_history)) {
-            if ((*vector::borrow<WithdrawalHistroy>(&vault.withdrawal_history, 0)).timestamp + 86400000000 < now) {
+            if ((*vector::borrow<WithdrawalHistroy>(&vault.withdrawal_history, 0)).timestamp + ONE_DAY_SEC < now) {
                 vector::remove<WithdrawalHistroy>(&mut vault.withdrawal_history, 0);
             } else {
                 break
@@ -200,8 +202,12 @@ module ra_addr::clank {
         user_account2: &signer,
         another_account: &signer,
         aptos_framework: &signer,
-        _timestamp: u64
+        timestamp: u64
     ) {
+        // set up global time for testing purpose
+        timestamp::set_time_has_started_for_testing(aptos_framework);
+        timestamp::update_global_time_for_test_secs(timestamp);
+
         create_account_for_test(signer::address_of(origin_account));
 
         // create a resource account from the origin account, mocking the module publishing process
@@ -225,14 +231,14 @@ module ra_addr::clank {
         coin::register<AptosCoin>(user_account1);
         coin::register<AptosCoin>(another_account);
 
-        let coins = coin::mint<AptosCoin>(3000, &mint_cap);
+        let coins = coin::mint<AptosCoin>(8000, &mint_cap);
         coin::deposit(signer::address_of(user_account1), coins);
 
         coin::destroy_burn_cap(burn_cap);
         coin::destroy_freeze_cap(freeze_cap);
         coin::destroy_mint_cap(mint_cap);
 
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 8000, 0);
     }
 
     #[test(origin_account = @origin_account, resource_account = @ra_addr, user_account1 = @0x123, user_account2 = @0x234, another_account=@0x567, aptos_framework=@aptos_framework)]
@@ -241,26 +247,33 @@ module ra_addr::clank {
         init_vaults<AptosCoin>(origin_account);
         initialize<AptosCoin>(user_account1, signer::address_of(user_account2), 1000);
 
-        deposit<AptosCoin>(user_account1, 2000);
-        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 2000, 0);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        deposit<AptosCoin>(user_account1, 5000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 5000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 0, 0);
 
         // under the withdrawal limit 1000
         request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 500);
-        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 1500, 0);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 4500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 500, 0);
 
         // over the withdrawal limit 1000
         request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 1000);
-        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 3500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 500, 0);
 
         allow_withdraw<AptosCoin>(user_account2, signer::address_of(user_account1), signer::address_of(another_account), 1000);
-        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 3500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 1500, 0);
+
+        // when withdrawal limit reseted
+        timestamp::fast_forward_seconds(ONE_DAY_SEC + 1);
+        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 1000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 2500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 2500, 0);
     }
 }

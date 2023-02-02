@@ -70,14 +70,24 @@ module ra_addr::clank {
         });
     }
 
-    public entry fun initialize<CoinType>(account: &signer, addr_2fa: address, withdrawal_limit: u64) acquires ModuleData, Vaults {
+    fun assert_vaults_initialized<CoinType>() acquires ModuleData {
         let module_data = borrow_global_mut<ModuleData>(@ra_addr);
         let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
         assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
+    }
+
+    fun assert_vault_initialized<CoinType>(addr: address) acquires ModuleData, Vaults {
+        assert_vaults_initialized<CoinType>();
+        let vaults = borrow_global<Vaults<CoinType>>(@ra_addr);
+        assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
+    }
+
+    public entry fun initialize<CoinType>(account: &signer, addr_2fa: address, withdrawal_limit: u64) acquires ModuleData, Vaults {
+        assert_vaults_initialized<CoinType>();
         let addr = signer::address_of(account);
         let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
         assert!(!table::contains(&vaults.vaults, addr), E_ALREADY_INIT_VAULT);
-        // TODO : account::create_account(addr_2fa); is not possible here.(its scope is friend)
+
         table::add(&mut vaults.vaults, addr, Vault<CoinType> {
             addr_2fa,
             coins: coin::zero<CoinType>(),
@@ -93,12 +103,9 @@ module ra_addr::clank {
     }
 
     public entry fun deposit<CoinType>(account: &signer, amount: u64) acquires ModuleData, Vaults {
-        let module_data = borrow_global_mut<ModuleData>(@ra_addr);
-        let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
-        assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
         let addr = signer::address_of(account);
+        assert_vault_initialized<CoinType>(addr);
         let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
-        assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
         let vault = table::borrow_mut(&mut vaults.vaults, addr);
         let coins = coin::withdraw<CoinType>(account, amount);
         coin::merge(&mut vault.coins, coins);
@@ -106,38 +113,16 @@ module ra_addr::clank {
 
     #[view]
     public fun balance<CoinType>(addr: address): u64 acquires ModuleData, Vaults {
-        let module_data = borrow_global_mut<ModuleData>(@ra_addr);
-        let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
-        assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
-        let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
-        assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
+        assert_vault_initialized<CoinType>(addr);
+        let vaults = borrow_global<Vaults<CoinType>>(@ra_addr);
         let vault = table::borrow(&vaults.vaults, addr);
         coin::value<CoinType>(&vault.coins)
     }
 
-    // TODO : for test, REMOVE THIS
-    public entry fun withdraw<CoinType>(account: &signer, receiver: address, amount: u64) acquires ModuleData, Vaults {
-        let module_data = borrow_global_mut<ModuleData>(@ra_addr);
-        let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
-        assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
-
-        let addr = signer::address_of(account);
-        let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
-        assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
-
-        let vault = table::borrow_mut(&mut vaults.vaults, addr);
-        let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
-        coin::deposit<CoinType>(receiver, extracted);
-    }
-
     public entry fun request_withdraw<CoinType>(account: &signer, receiver: address, amount: u64) acquires ModuleData, Vaults {
-        let module_data = borrow_global_mut<ModuleData>(@ra_addr);
-        let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
-        assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
-
         let addr = signer::address_of(account);
+        assert_vault_initialized<CoinType>(addr);
         let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
-        assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
         let vault = table::borrow_mut(&mut vaults.vaults, addr);
 
         // Clean up old history
@@ -167,6 +152,7 @@ module ra_addr::clank {
                 table::add(&mut vault.withdrawal_waiting, receiver, extracted);
             }
         } else {
+            // direct withdrawal
             let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
             coin::deposit<CoinType>(receiver, extracted);
             vector::push_back<WithdrawalHistroy>(&mut vault.withdrawal_history, WithdrawalHistroy {
@@ -177,13 +163,8 @@ module ra_addr::clank {
     }
 
     public entry fun allow_withdraw<CoinType>(account: &signer, sender: address, receiver: address, amount: u64) acquires ModuleData, Vaults {
-        let module_data = borrow_global_mut<ModuleData>(@ra_addr);
-        let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
-        assert!(exists<Vaults<CoinType>>(signer::address_of(&resource_signer)), E_VAULTS_NOT_INITIALIZED);
-
+        assert_vault_initialized<CoinType>(sender);
         let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
-        assert!(table::contains(&vaults.vaults, sender), E_VAULT_NOT_INITIALIZED);
-
         let vault = table::borrow_mut(&mut vaults.vaults, sender);
         assert!(vault.addr_2fa == signer::address_of(account), E_INAPPROPRIATE_SECOND_FA);
 
@@ -192,8 +173,7 @@ module ra_addr::clank {
         let extracted = coin::extract<CoinType>(waiting, amount);
         coin::deposit<CoinType>(receiver, extracted);
     }
-    
-    // TODO : TEST CODES
+
     #[test_only]
     public fun set_up_test(
         origin_account: &signer,

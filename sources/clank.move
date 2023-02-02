@@ -4,8 +4,9 @@ module ra_addr::clank {
     use std::vector;
     use aptos_std::table::{Self, Table};
     use aptos_framework::account::{Self, SignerCapability};
-    use aptos_framework::resource_account;
     use aptos_framework::coin::{Self, Coin};
+    use aptos_framework::resource_account;
+    // use aptos_framework::timestamp;
 
     #[test_only]
     use std::string;
@@ -32,17 +33,17 @@ module ra_addr::clank {
 
     struct Vault<phantom CoinType> has store {
         addr_2fa: address,
-        // original_auth: vec<u8>,
+        // original_auth: vec<u8>, TODO : in order to prevent compromised key rotation
         coins: Coin<CoinType>,
         withdrawal_limit: u64,
         withdrawal_waiting: Table<address, Coin<CoinType>>,
-        withdrawal_history: vector<WithdrawalHistroy>,
+        withdrawal_history: vector<WithdrawalHistroy>, // TODO : better to use Queue
         limit_change_req: LimitChangeReq,
     }
 
-    struct WithdrawalHistroy has store, drop {
+    struct WithdrawalHistroy has store, drop, copy {
         amount: u64,
-        timestampe: u64,
+        timestamp: u64,
     }
 
     struct LimitChangeReq has store {
@@ -127,7 +128,6 @@ module ra_addr::clank {
         coin::deposit<CoinType>(receiver, extracted);
     }
 
-    // TODO : check withdrawal_limit
     public entry fun request_withdraw<CoinType>(account: &signer, receiver: address, amount: u64) acquires ModuleData, Vaults {
         let module_data = borrow_global_mut<ModuleData>(@ra_addr);
         let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
@@ -136,14 +136,41 @@ module ra_addr::clank {
         let addr = signer::address_of(account);
         let vaults = borrow_global_mut<Vaults<CoinType>>(@ra_addr);
         assert!(table::contains(&vaults.vaults, addr), E_VAULT_NOT_INITIALIZED);
-
         let vault = table::borrow_mut(&mut vaults.vaults, addr);
-        let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
-        if (table::contains(&vault.withdrawal_waiting, receiver)) {
-            let waiting = table::borrow_mut(&mut vault.withdrawal_waiting, receiver);
-            coin::merge<CoinType>(waiting, extracted);
+
+        // Clean up old history
+        let now: u64 = 10; // timestamp::now_seconds();
+        while (!vector::is_empty<WithdrawalHistroy>(&vault.withdrawal_history)) {
+            if ((*vector::borrow<WithdrawalHistroy>(&vault.withdrawal_history, 0)).timestamp + 86400000000 < now) {
+                vector::remove<WithdrawalHistroy>(&mut vault.withdrawal_history, 0);
+            } else {
+                break
+            }
+        };
+
+        // Get withdrawal_sum
+        let idx: u64 = 0;
+        let withdrawal_sum: u64 = 0;
+        while (idx < vector::length(&vault.withdrawal_history)) {
+            withdrawal_sum = withdrawal_sum + (*vector::borrow(&vault.withdrawal_history, idx)).amount;
+            idx = idx + 1;
+        };
+
+        if (withdrawal_sum + amount > vault.withdrawal_limit) {
+            let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
+            if (table::contains(&vault.withdrawal_waiting, receiver)) {
+                let waiting = table::borrow_mut(&mut vault.withdrawal_waiting, receiver);
+                coin::merge<CoinType>(waiting, extracted);
+            } else {
+                table::add(&mut vault.withdrawal_waiting, receiver, extracted);
+            }
         } else {
-            table::add(&mut vault.withdrawal_waiting, receiver, extracted);
+            let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
+            coin::deposit<CoinType>(receiver, extracted);
+            vector::push_back<WithdrawalHistroy>(&mut vault.withdrawal_history, WithdrawalHistroy {
+                amount,
+                timestamp: now,
+            });
         }
     }
 
@@ -157,7 +184,10 @@ module ra_addr::clank {
 
         let vault = table::borrow_mut(&mut vaults.vaults, sender);
         assert!(vault.addr_2fa == signer::address_of(account), E_INAPPROPRIATE_SECOND_FA);
-        let extracted = coin::extract<CoinType>(&mut vault.coins, amount);
+
+        assert!(table::contains(&vault.withdrawal_waiting, receiver), 0);
+        let waiting = table::borrow_mut(&mut vault.withdrawal_waiting, receiver);
+        let extracted = coin::extract<CoinType>(waiting, amount);
         coin::deposit<CoinType>(receiver, extracted);
     }
     
@@ -169,7 +199,8 @@ module ra_addr::clank {
         user_account1: &signer,
         user_account2: &signer,
         another_account: &signer,
-        aptos_framework: &signer
+        aptos_framework: &signer,
+        _timestamp: u64
     ) {
         create_account_for_test(signer::address_of(origin_account));
 
@@ -194,28 +225,42 @@ module ra_addr::clank {
         coin::register<AptosCoin>(user_account1);
         coin::register<AptosCoin>(another_account);
 
-        let coins = coin::mint<AptosCoin>(2000, &mint_cap);
+        let coins = coin::mint<AptosCoin>(3000, &mint_cap);
         coin::deposit(signer::address_of(user_account1), coins);
 
         coin::destroy_burn_cap(burn_cap);
         coin::destroy_freeze_cap(freeze_cap);
         coin::destroy_mint_cap(mint_cap);
 
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 2000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 3000, 0);
     }
 
     #[test(origin_account = @origin_account, resource_account = @ra_addr, user_account1 = @0x123, user_account2 = @0x234, another_account=@0x567, aptos_framework=@aptos_framework)]
     public entry fun test_overall(origin_account: &signer, resource_account: &signer, user_account1: &signer, user_account2: &signer, another_account: &signer, aptos_framework: &signer) acquires ModuleData, Vaults {
-        set_up_test(origin_account, resource_account, user_account1, user_account2, another_account, aptos_framework);
+        set_up_test(origin_account, resource_account, user_account1, user_account2, another_account, aptos_framework, 10);
         init_vaults<AptosCoin>(origin_account);
         initialize<AptosCoin>(user_account1, signer::address_of(user_account2), 1000);
-        deposit<AptosCoin>(user_account1, 1500);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
-        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 300);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
+
+        deposit<AptosCoin>(user_account1, 2000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 2000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
         assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 0, 0);
-        allow_withdraw<AptosCoin>(user_account2, signer::address_of(user_account1), signer::address_of(another_account), 150);
-        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
-        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 150, 0);
+
+        // under the withdrawal limit 1000
+        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 500);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 1500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 500, 0);
+
+        // over the withdrawal limit 1000
+        request_withdraw<AptosCoin>(user_account1, signer::address_of(another_account), 1000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 500, 0);
+
+        allow_withdraw<AptosCoin>(user_account2, signer::address_of(user_account1), signer::address_of(another_account), 1000);
+        assert!(balance<AptosCoin>(signer::address_of(user_account1)) == 500, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(user_account1)) == 1000, 0);
+        assert!(coin::balance<AptosCoin>(signer::address_of(another_account)) == 1500, 0);
     }
 }

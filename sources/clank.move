@@ -23,6 +23,7 @@ module ra_addr::clank {
     const E_VAULT_NOT_INITIALIZED: u64 = 4;
     const E_INAPPROPRIATE_SECOND_FA: u64 = 5;
     const E_LIMIT_CHANGE_REQ_UNMATCHED: u64 = 6;
+    const E_SAME_ADDR_USAGE: u64 = 7;
 
     struct ModuleData has key {
         signer_cap: SignerCapability,
@@ -65,6 +66,11 @@ module ra_addr::clank {
         });
     }
 
+    spec init_vaults {
+        requires exists<ModuleData>(@ra_addr);
+        requires !exists<Vaults<CoinType>>(@ra_addr);
+    }
+
     fun assert_vaults_initialized<CoinType>() acquires ModuleData {
         let module_data = borrow_global_mut<ModuleData>(@ra_addr);
         let resource_signer = account::create_signer_with_capability(&module_data.signer_cap);
@@ -94,6 +100,11 @@ module ra_addr::clank {
         vaults.vault_count = vaults.vault_count + 1;
     }
 
+    spec initialize {
+        requires signer::address_of(account) != addr_2fa;
+        ensures global<Vaults<CoinType>>(@ra_addr).vault_count > 0;
+    }
+
     public entry fun deposit<CoinType>(account: &signer, amount: u64) acquires ModuleData, Vaults {
         let addr = signer::address_of(account);
         assert_vault_initialized<CoinType>(addr);
@@ -101,6 +112,10 @@ module ra_addr::clank {
         let vault = table::borrow_mut(&mut vaults.vaults, addr);
         let coins = coin::withdraw<CoinType>(account, amount);
         coin::merge(&mut vault.coins, coins);
+    }
+
+    spec deposit {
+        requires amount > 0;
     }
 
     #[view]

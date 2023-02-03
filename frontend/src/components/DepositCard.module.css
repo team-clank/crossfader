@@ -1,0 +1,63 @@
+.title {
+  align-self: stretch;
+  position: relative;
+}
+.input,
+.text {
+  position: relative;
+  display: inline-block;
+}
+.input {
+  border: 0;
+  font-family: var(--title31);
+  font-size: var(--title21-size);
+  background-color: transparent;
+  font-weight: 700;
+  color: var(--mono-3001);
+  text-align: center;
+  padding-left: 18;
+}
+.text {
+  width: 476px;
+}
+.inputcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-2xs);
+  font-size: var(--title41-size);
+  color: var(--mono-5001);
+}
+.text1 {
+  position: relative;
+  font-weight: 500;
+  display: inline-block;
+  width: 476px;
+  opacity: 0;
+}
+.convcontainer,
+.percentcontainer,
+.textcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-2xs);
+}
+.convcontainer,
+.textcontainer {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--gap-md);
+  font-size: var(--font-size-base);
+  color: var(--brand-4001);
+}
+.textcontainer {
+  align-self: stretch;
+  gap: var(--gap-2xl);
+  text-align: center;
+  font-size: var(--title31-size);
+  color: var(--mono-4001);
+  font-family: var(--title31);
+}

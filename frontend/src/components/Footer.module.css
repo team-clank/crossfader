@@ -1,0 +1,54 @@
+.btnnamet {
+  position: relative;
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.btnText,
+.privacycontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btnText {
+  border-radius: var(--br-md);
+  padding: var(--padding-3xs) var(--padding-xs);
+  justify-content: center;
+}
+.privacycontainer {
+  justify-content: flex-start;
+  gap: var(--gap-xl);
+}
+.image24Icon,
+.subtractIcon {
+  position: relative;
+  flex-shrink: 0;
+}
+.subtractIcon {
+  width: 29px;
+  height: 29px;
+  opacity: 0.8;
+}
+.image24Icon {
+  width: 30px;
+  height: 25px;
+  object-fit: cover;
+}
+.bottombuttoncontainer,
+.socialbuttoncontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.socialbuttoncontainer {
+  justify-content: flex-start;
+  gap: var(--gap-3xl);
+}
+.bottombuttoncontainer {
+  align-self: stretch;
+  padding: var(--padding-2xs) var(--padding-sm);
+  justify-content: space-between;
+  text-align: center;
+  font-size: var(--text2-size);
+  color: var(--mono-500);
+  font-family: var(--title31);
+}

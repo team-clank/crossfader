@@ -1,0 +1,98 @@
+.logoIcon {
+  position: relative;
+  width: 132px;
+  height: 25px;
+  flex-shrink: 0;
+}
+.btnnamet {
+  position: relative;
+  font-size: var(--text11-size);
+  font-family: var(--title31);
+  color: var(--mono-500);
+  text-align: center;
+}
+.btnText {
+  border-radius: var(--br-md);
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+}
+.btnText,
+.btncontainer,
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btncontainer {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  justify-content: flex-end;
+  gap: var(--gap-lg);
+}
+.nav {
+  align-self: stretch;
+  padding: var(--padding-2xs) var(--padding-sm);
+  justify-content: space-between;
+}
+.aSolidSafe {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.yourAssets {
+  margin: 0;
+}
+.description,
+.title {
+  position: relative;
+}
+.description {
+  font-size: 28px;
+  font-weight: 500;
+}
+.btnText2,
+.textcontainer {
+  display: flex;
+  align-items: center;
+}
+.textcontainer {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--gap-2xl);
+}
+.btnText2 {
+  border-radius: var(--br-md);
+  background-color: var(--brand-4001);
+  flex-direction: row;
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+}
+.contentscontainer {
+  padding: 0 0 var(--padding-2xl);
+  justify-content: flex-start;
+  gap: var(--gap-4xl);
+}
+.body,
+.contentscontainer,
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.body {
+  flex: 1;
+  width: 1280px;
+  justify-content: space-between;
+}
+.landing {
+  position: relative;
+  background-color: var(--mono-0);
+  width: 100%;
+  height: 832px;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--title1-size);
+  color: var(--mono-500);
+  font-family: var(--title31);
+}

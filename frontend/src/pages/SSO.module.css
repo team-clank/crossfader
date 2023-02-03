@@ -1,0 +1,105 @@
+.logoIcon {
+  position: relative;
+  width: 132px;
+  height: 25px;
+  flex-shrink: 0;
+}
+.btnname {
+  position: relative;
+  font-size: var(--text11-size);
+  font-weight: 500;
+  font-family: var(--title31);
+  color: var(--color-black);
+  text-align: center;
+}
+.btnText,
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btnText {
+  border-radius: var(--br-md);
+  border: 1px solid var(--mono-500);
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+}
+.nav {
+  align-self: stretch;
+  padding: var(--padding-2xs) var(--padding-sm);
+  justify-content: space-between;
+}
+.title {
+  position: relative;
+}
+.theEmailYou {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.strong2faSecurity {
+  margin: 0;
+}
+.text {
+  position: relative;
+  font-size: var(--text2-size);
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.textcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-2xl);
+}
+.googleIcon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.btnText1 {
+  border-radius: var(--br-md);
+  background-color: var(--mono-0);
+  border: 1px solid var(--mono-200);
+  box-sizing: border-box;
+  width: 382px;
+  display: flex;
+  flex-direction: row;
+  padding: var(--padding-3xs) var(--padding-sm);
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  font-size: var(--text11-size);
+}
+.contentscontainer {
+  padding: 0 0 var(--padding-2xl);
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-4xl);
+}
+.body,
+.contentscontainer,
+.sso {
+  display: flex;
+  flex-direction: column;
+}
+.body {
+  align-self: stretch;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+.sso {
+  position: relative;
+  background-color: var(--mono-0);
+  width: 100%;
+  height: 832px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: center;
+  font-size: var(--title21-size);
+  color: var(--mono-500);
+  font-family: var(--title31);
+}

@@ -1,0 +1,59 @@
+.logoIcon {
+  width: 132px;
+  height: 25px;
+  flex-shrink: 0;
+}
+.btnnamet,
+.logoIcon {
+  position: relative;
+}
+.btnText {
+  border-radius: var(--br-md);
+  width: 139px;
+  flex-shrink: 0;
+  padding: var(--padding-3xs) var(--padding-sm);
+  box-sizing: border-box;
+}
+.btnText,
+.btnText1,
+.btncontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.btnText1 {
+  border-radius: var(--br-md);
+  padding: var(--padding-3xs) var(--padding-sm);
+  color: var(--mono-500);
+}
+.btncontainer {
+  padding: 0 0 0 var(--padding-4xl);
+  gap: var(--gap-lg);
+}
+.btnname {
+  position: relative;
+  font-weight: 500;
+}
+.btnText2,
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btnText2 {
+  border-radius: var(--br-md);
+  border: 1px solid var(--mono-500);
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+  color: var(--color-black);
+}
+.nav {
+  align-self: stretch;
+  padding: var(--padding-2xs) var(--padding-sm);
+  justify-content: space-between;
+  text-align: center;
+  font-size: var(--text11-size);
+  color: var(--brand-4001);
+  font-family: var(--title31);
+}

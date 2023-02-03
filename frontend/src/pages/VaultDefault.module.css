@@ -1,0 +1,109 @@
+.activities {
+  position: relative;
+}
+.vaultheader {
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.aptosSymbolIcon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.date,
+.status {
+  position: relative;
+  font-weight: 500;
+}
+.date {
+  font-size: var(--text4-medium-size);
+  color: var(--color-darkgray);
+  text-align: left;
+}
+.loginfocontainer,
+.textcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-4xs);
+}
+.loginfocontainer {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-md);
+}
+.amountApt {
+  position: relative;
+  font-weight: 800;
+}
+.logitemcontainer {
+  width: 412px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.loglistitemcontainer {
+  align-items: flex-start;
+  gap: var(--gap-sm);
+}
+.logcontainer,
+.loglistcontainer,
+.loglistitemcontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.loglistcontainer {
+  align-items: center;
+  gap: var(--gap-lg);
+  text-align: right;
+  font-size: var(--text2-medium-size);
+}
+.logcontainer {
+  border-radius: var(--br-md);
+  background-color: var(--mono-0);
+  border: 1px solid var(--mono-200);
+  box-sizing: border-box;
+  width: 476px;
+  overflow: hidden;
+  padding: var(--padding-md) var(--padding-xl) var(--padding-sm);
+  align-items: flex-start;
+  gap: var(--gap-3xl);
+}
+.vaultinfocontainer {
+  align-items: center;
+  justify-content: flex-start;
+  gap: 13px;
+}
+.body,
+.vaultDefault,
+.vaultinfocontainer {
+  display: flex;
+  flex-direction: column;
+}
+.body {
+  align-self: stretch;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+.vaultDefault {
+  position: relative;
+  background-color: var(--mono-0);
+  width: 100%;
+  height: 832px;
+  overflow: hidden;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  font-size: var(--text11-size);
+  color: var(--color-black);
+  font-family: var(--title31);
+}

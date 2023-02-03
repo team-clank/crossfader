@@ -1,5 +1,5 @@
 [package]
-name = 'clank'
+name = 'sampledefi'
 version = '1.0.0'
 
 [addresses]
@@ -8,4 +8,4 @@ ra_addr = '0xc3bb8488ab1a5815a9d543d7e41b0e0df46a7396f89b22821f07a4362f75ddc5'
 my_addr = '0x370e24bddb0149e8c225b87f8e0e19b5786f58aff7cdcb7b949419c55d6712bb'
 
 [dependencies]
-AptosFramework = { local = "../aptos-core/aptos-move/framework/aptos-framework"}
+AptosFramework = { git = 'https://github.com/aptos-labs/aptos-core.git', rev = '3a1754357601e26684a8119f159d9ebb74ecb006', subdir = 'aptos-move/framework/aptos-framework' }

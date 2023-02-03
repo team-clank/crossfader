@@ -1,0 +1,103 @@
+.depositedTokens {
+  position: relative;
+}
+.kebabbuttonChild {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  flex-shrink: 0;
+}
+.kebabbutton {
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-4xs) var(--padding-3xs);
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-3xs);
+}
+.vaultheader {
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.estvalue {
+  position: relative;
+  font-size: var(--text4-medium-size);
+  font-weight: 500;
+  color: var(--color-darkgray);
+}
+.assetcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-4xs);
+}
+.aptosSymbolIcon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.aptoscontainer,
+.itemcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.aptoscontainer {
+  justify-content: flex-start;
+  gap: var(--gap-2xs);
+  font-size: var(--text11-size);
+}
+.itemcontainer {
+  align-self: stretch;
+  justify-content: space-between;
+  font-size: var(--title31-size);
+}
+.btnText,
+.btncontainer {
+  position: absolute;
+  left: 0;
+}
+.btncontainer {
+  top: 55.68px;
+  width: 412px;
+  height: 53.32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-xs);
+}
+.btnText {
+  top: 0;
+}
+.buttoncontainer {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+}
+.vaultcontainer {
+  border-radius: var(--br-md);
+  background-color: var(--mono-0);
+  border: 1px solid var(--mono-200);
+  box-sizing: border-box;
+  width: 476px;
+  height: 331px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-md) var(--padding-xl);
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-3xl);
+  text-align: left;
+  font-size: var(--text11-size);
+  color: var(--color-black);
+  font-family: var(--title31);
+}

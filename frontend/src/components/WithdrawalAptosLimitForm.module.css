@@ -1,0 +1,76 @@
+.pleaseEnterYour {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.withdrawalAptosLimit {
+  margin: 0;
+}
+.text,
+.title {
+  align-self: stretch;
+  position: relative;
+}
+.text {
+  font-size: var(--text2-size);
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.textcontainer {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-2xl);
+}
+.limitinputcontainer {
+  border: 0;
+  background-color: transparent;
+  flex: 1;
+}
+.apt,
+.aptosSymbolIcon {
+  position: absolute;
+  top: 0;
+}
+.aptosSymbolIcon {
+  left: 0;
+  width: 29px;
+  height: 29px;
+  overflow: hidden;
+}
+.apt {
+  left: 37px;
+}
+.aptoscontainer {
+  position: relative;
+  width: 90px;
+  height: 29px;
+  flex-shrink: 0;
+  display: none;
+}
+.contentscontainer,
+.input {
+  display: flex;
+  justify-content: flex-start;
+}
+.input {
+  align-self: stretch;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--gap-3xl);
+  text-align: right;
+  font-size: var(--text11-size);
+}
+.contentscontainer {
+  width: 526px;
+  flex-direction: column;
+  padding: 0 0 var(--padding-3xl);
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--gap-4xl);
+  text-align: left;
+  font-size: var(--title21-size);
+  color: var(--mono-500);
+  font-family: var(--title31);
+}

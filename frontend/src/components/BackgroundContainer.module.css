@@ -1,0 +1,131 @@
+.subscribe {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.theSecurityAlert {
+  margin: 0;
+}
+.title {
+  align-self: stretch;
+  position: relative;
+}
+.weWillInform {
+  color: var(--mono-500);
+}
+.emailgmailcom {
+  text-decoration: underline;
+  color: var(--color-steelblue);
+}
+.text {
+  align-self: stretch;
+  position: relative;
+  font-size: var(--text2-size);
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.textcontainer {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-2xl);
+}
+.checkbox1 {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: var(--br-sm);
+  border: 1px solid var(--color-black);
+  box-sizing: border-box;
+}
+.vectorIcon {
+  position: absolute;
+  height: 52.4%;
+  width: 69.81%;
+  top: 23.8%;
+  right: 15.09%;
+  bottom: 23.8%;
+  left: 15.09%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+.checkbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.text1 {
+  flex: 1;
+  position: relative;
+  font-weight: 500;
+}
+.checkboxcontainer {
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  padding: 0 0 var(--padding-3xs);
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-sm);
+  font-size: var(--text3-medium1-size);
+  color: var(--color-dimgray);
+}
+.btnname {
+  position: relative;
+  font-weight: 500;
+}
+.btnText {
+  border-radius: var(--br-md);
+  border: 1px solid var(--brand-4001);
+  display: flex;
+  flex-direction: row;
+  padding: var(--padding-3xs) var(--padding-sm);
+  align-items: center;
+  justify-content: center;
+}
+.btnnamet {
+  position: relative;
+  text-decoration: underline;
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.btnText1,
+.buttoncontainer,
+.contentscontainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btnText1 {
+  border-radius: var(--br-md);
+  flex-direction: row;
+  padding: var(--padding-3xs) var(--padding-sm);
+  font-size: var(--text2-size);
+  color: var(--mono-500);
+}
+.buttoncontainer,
+.contentscontainer {
+  flex-direction: column;
+  gap: var(--gap-sm);
+  text-align: center;
+  font-size: var(--text11-size);
+  color: var(--brand-4001);
+}
+.contentscontainer {
+  width: 476px;
+  padding: 0 0 var(--padding-lg);
+  box-sizing: border-box;
+  justify-content: flex-start;
+  gap: var(--gap-4xl);
+  text-align: left;
+  font-size: var(--title21-size);
+  color: var(--mono-500);
+  font-family: var(--title31);
+}

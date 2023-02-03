@@ -1,0 +1,31 @@
+.logoIcon {
+  position: relative;
+  width: 132px;
+  height: 25px;
+  flex-shrink: 0;
+}
+.btnname {
+  position: relative;
+  font-size: var(--title41-size);
+  font-weight: 500;
+  font-family: var(--title31);
+  color: var(--color-black);
+  text-align: center;
+}
+.btnText,
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.btnText {
+  border-radius: var(--br-md);
+  border: 1px solid var(--mono-5001);
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+}
+.nav {
+  align-self: stretch;
+  padding: var(--padding-2xs) var(--padding-sm);
+  justify-content: space-between;
+}

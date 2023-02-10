@@ -2,7 +2,7 @@
 # Crossfader
 **Crossfader** is on-chain vault with conditional 2FA
 
-We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). Crossfader was made as a proof of concept. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md)
+We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). Crossfader was made as a proof of concept. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader/blob/main/CUSTOMIZED-MULTI-SIG.md)
 
 ### why is this product called Crossfader?
 Crossfader is a slider used by a DJ to naturally flip or mix sounds between two sources. You can move the crossfader left and right. DJ can play one side of the music, or mix it properly.
@@ -61,7 +61,7 @@ The number of activities will keep being added.
 
 ## What’s next for Crossfader
 
-- **Aptos-core contribution for suggesting `native customized multi sig`** (Please visit [the link](https://github.com/team-clank/crossfader-aptos-contract/blob/main/CUSTOMIZED-MULTI-SIG.md) if you are interested!)
+- **Aptos-core contribution for suggesting `native customized multi sig`** (Please visit [the link](https://github.com/team-clank/crossfader/blob/main/CUSTOMIZED-MULTI-SIG.md) if you are interested!)
   - Flagship service of the new standard
   - more secure conditional 2FA account
   - secured dynamic transactions

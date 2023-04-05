@@ -1,5 +1,5 @@
 # Crossfader(CLANK)
-### ![Winner of Aptos World Tour Seoul Hack 2023(Honorable Mention, Track: Best Move)](https://aptosfoundation.org/currents/aptos-world-tour-seoul-hack-recap-2023)
+### [Winner of Aptos World Tour Seoul Hack 2023(Honorable Mention, Track: Best Move)](https://aptosfoundation.org/currents/aptos-world-tour-seoul-hack-recap-2023)
 **Crossfader** is on-chain vault with conditional 2FA
 
 We introduced `On-chain Contidional MFA(Multi-factor authentication)` in [Aptos hackathon](https://aptosfoundation.org/currents/aptos-world-tour-hackathon-seoul-2023). Crossfader was made as a proof of concept. For the new authentication scheme we suggested at the hackathon, please refer to this link. [Native customzied multi-sig on Aptos](https://github.com/team-clank/crossfader/blob/main/CUSTOMIZED-MULTI-SIG.md)
